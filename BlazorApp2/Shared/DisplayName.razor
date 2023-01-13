@@ -1,0 +1,88 @@
+﻿@using System.Reflection
+@using System.Linq.Expressions;
+@using System.ComponentModel.DataAnnotations;
+@typeparam T
+@if (ChildContent == null)
+{
+
+    <span>Type: @RuntimeType?.Name</span>
+    <label title="Description" class="@cssClass">@label</label>
+}
+else
+{
+    <span>Type: @RuntimeType?.Name</span>
+    <label title="Description" class="@cssClass">
+        @label
+        @ChildContent
+    </label>
+}
+
+@code {
+
+
+
+
+    [Parameter, EditorRequired] public Expression<Func<T>> For { get; set; } = null!;
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// Mutable type.<br/>
+    /// E.g. myInstance.GetType()
+    /// </summary>
+    [Parameter] public Type? RuntimeType { get; set; }
+
+
+
+    private const string RequiredCssClass = "required";
+    private const string DescriptionCssClass = "description";
+
+    private MemberInfo memberInfo => GetMemberInfo();
+
+
+    Type? DeclaringType => memberInfo.DeclaringType;
+
+    private string? cssClass => ResolveCssClass();
+
+
+    private string label => GetDisplayName();
+    private bool Required => IsRequiredDefined();
+
+    private MemberInfo GetMemberInfo()
+    {
+        if(RuntimeType != null)
+        {
+            var propertyName = ((MemberExpression)For.Body).Member.Name;
+            return RuntimeType.GetMember(propertyName).FirstOrDefault() ?? throw new ArgumentException($"Type {RuntimeType.FullName} does not contains member {propertyName}.");
+        }
+
+        return ((MemberExpression)For.Body).Member;
+    }
+
+    private bool IsRequiredDefined()
+    {
+        var a = memberInfo?.GetCustomAttribute(typeof(RequiredAttribute)) != null;
+        return a;
+    }
+
+    private string GetDisplayName()
+    {
+        var expression = (MemberExpression)For.Body;
+        var value = memberInfo.GetCustomAttribute(typeof(DisplayAttribute)) as DisplayAttribute;
+        return value?.Name ?? expression.Member.Name ?? "";
+    }
+
+    private string? ResolveCssClass()
+    {
+        string? cssClass = null;
+        if(Required)
+            cssClass = RequiredCssClass;
+
+        return cssClass;
+
+     
+            /*
+        if (!string.IsNullOrEmpty(Description))
+            AddCssClass(DescriptionCssClass);
+        */
+    }
+}

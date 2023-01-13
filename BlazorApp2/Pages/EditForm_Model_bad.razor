@@ -1,0 +1,25 @@
+﻿@page "/model"
+@inherits EditFormBase
+<h2>EditForm Model test</h2>
+
+<EditForm Model="PageViewModel">
+    <ObjectGraphDataAnnotationsValidator />
+    <ValidationSummary />
+
+    <p>
+        <DisplayName RuntimeType="PageViewModel.ModelDto.GetType()" For="()=>PageViewModel.ModelDto.Id">
+            <InputNumber @bind-Value="PageViewModel.ModelDto.Id" />
+        </DisplayName>
+    </p>
+    <p>
+        <DisplayName RuntimeType="PageViewModel.ModelDto.GetType()" For="()=>PageViewModel.ModelDto.Description">
+            <InputText @bind-Value="PageViewModel.ModelDto.Description" />
+        </DisplayName>
+    </p>
+
+    <button @onclick="()=> Edit()">Load Edit model</button>
+    <button @onclick="()=> Create()">Load Create model</button>
+    <button @onclick="()=> Validate()">Validate form</button>
+</EditForm>
+
+

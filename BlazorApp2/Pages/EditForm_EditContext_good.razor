@@ -1,0 +1,31 @@
+﻿@page "/editcontext_good"
+@inherits EditFormBase
+
+@{
+    //fixing functionality with reasigning EditContext during reasigning ModelDto instance
+    PageViewModel.AutoReasignEditContext = true;
+}
+
+<h2>EditForm EditContext test</h2>
+
+<EditForm EditContext="PageEditContext">
+    <ObjectGraphDataAnnotationsValidator />
+    <ValidationSummary />
+
+    <p>
+        <DisplayName RuntimeType="PageViewModel.ModelDto.GetType()" For="()=>PageViewModel.ModelDto.Id">
+            <InputNumber @bind-Value="PageViewModel.ModelDto.Id" />
+        </DisplayName>
+    </p>
+    <p>
+        <DisplayName RuntimeType="PageViewModel.ModelDto.GetType()" For="()=>PageViewModel.ModelDto.Description">
+            <InputText @bind-Value="PageViewModel.ModelDto.Description" />
+        </DisplayName>
+    </p>
+    
+    <button @onclick="()=> Edit()">Load Edit model</button>
+    <button @onclick="()=> Create()">Load Create model</button>
+    <button @onclick="()=> Validate()">Validate form</button>
+</EditForm>
+
+
